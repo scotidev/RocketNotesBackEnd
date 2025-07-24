@@ -1,16 +1,32 @@
-const { Router } = require("express")
-const multer = require("multer")
-const uploadConfig = require("../configs/upload.js")
-const upload = multer(uploadConfig.MULTER)
-const UsersController = require("../controllers/UsersController.js")
-const userRoutes = Router()
-const ensureAuthenticated = require("../middleware/ensureAuthenticated.js")
-const userController = new UsersController()
+import { Router } from "express";
+import multer from "multer";
+import { uploadConfig } from "../configs/upload.js";
 
-userRoutes.post("/", userController.create)
-userRoutes.put("/", ensureAuthenticated, userController.update)
-userRoutes.patch("/avatar", ensureAuthenticated, upload.single("avatar"), (request, response) => {
-    console.log(request.file.filename)
-})
+import { UsersController } from "../controllers/UsersController.js";
+import { UserAvatarController } from "../controllers/UserAvatarController.js";
+import { ensureAuthenticated } from "../middleware/ensureAuthenticated.js";
 
-module.exports = userRoutes
+export const userRoutes = Router();
+
+const upload = multer(uploadConfig.MULTER);
+
+const userController = new UsersController();
+const userAvatarController = new UserAvatarController();
+
+userRoutes.post("/", userController.create);
+
+userRoutes.put("/", ensureAuthenticated, userController.update);
+
+userRoutes.patch(
+  "/avatar",
+  ensureAuthenticated,
+  upload.single("avatar"),
+  (request, response) => {
+    userAvatarController.update(request, response);
+    console.log(request.file.filename);
+    return response.json({
+      message: "Avatar uploaded successfully",
+      filename: request.file.filename,
+    });
+  }
+);

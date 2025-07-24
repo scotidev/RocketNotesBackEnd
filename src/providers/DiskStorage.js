@@ -1,28 +1,29 @@
-const fs  = require("fs")
-const path = require("path")
-const uploadConfig = require("../configs/upload.js")
+import { promises as fs } from "fs";
+import path from "path";
+import { uploadConfig } from "../configs/upload.js";
 
-class DiskStorage {
-    async saveFile(file) {
-        await fs.promises.rename(
-            path.resolve(uploadConfig.TMP_FOLDER, file),
-            path.resolve(uploadConfig.UPLOADS_FOLDER, file)
-        )
+export class DiskStorage {
+  async saveFile(file) {
+    await fs.rename(
+      path.resolve(uploadConfig.TMP_FOLDER, file),
+      path.resolve(uploadConfig.UPLOADS_FOLDER, file)
+    );
 
-        return file
+    return file;
+  }
+
+  async deleteFile(file) {
+    const filePath = path.resolve(uploadConfig.UPLOADS_FOLDER, file);
+
+    try {
+      await fs.stat(filePath);
+    } catch (error) {
+      if (error.code === "ENOENT") {
+        return;
+      }
+      throw error;
     }
 
-    async deleteFile(file) {
-        const filePath = path.resolve(uploadConfig.UPLOADS_FOLDER, file)
-
-        try {
-            await fs.promises.stat(filePath)
-        }catch{
-            return 
-        }
-
-        await fs.promises.unlink(filePath)
-    }
+    await fs.unlink(filePath);
+  }
 }
-
-module.exports = DiskStorage

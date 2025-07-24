@@ -1,70 +1,72 @@
-const { hash, compare } = require("bcryptjs")
-const AppError = require("../utils/AppError.js")
-const sqliteConnection = require("../database/sqlite")
-const { application } = require("express")
+import { hash, compare } from "bcrypt";
+import { AppError } from "../utils/AppError.js";
+import { knexConnection as knex } from "../database/knex/index.js";
 
-class UsersController {
-    async create(request, response) {
-        const { name, email, password} = request.body
-        const database = await sqliteConnection()
-        const checkUserExists = await database.get("SELECT * FROM users WHERE email = (?)", [email])
+export class UsersController {
+  async create(request, response) {
+    const { name, email, password } = request.body;
 
-        if(checkUserExists){
-            throw new AppError("Este email ja foi usado")
-        }
+    const checkUserExists = await knex("users").where({ email }).first();
 
-        const hashedPassword = await hash(password, 8)
-
-        await database.run("INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-        [name, email, hashedPassword]
-        )
-
-        return response.status(201).json()
+    if (checkUserExists) {
+      throw new AppError("Este email já foi usado");
     }
 
-    async update(request, response) {
-        const { name, email, password, old_password } = request.body
-        const user_id = request.user.id
-        const database = await sqliteConnection()
-        const user = await database.get("SELECT * FROM users WHERE id = (?)", [user_id])
+    const hashedPassword = await hash(password, 8);
 
-        if(!user) {
-            throw new AppError("User not found")
-        }
+    await knex("users").insert({
+      name,
+      email,
+      password: hashedPassword,
+    });
 
-        const userUpdatedEmail = await database.get("SELECT * FROM users WHERE email = (?)", [email])
-        if(userUpdatedEmail && userUpdatedEmail.id !== user.id) {
-            throw new AppError("Email already used")
-        }
+    return response.status(201).json();
+  }
 
-        user.name = name ?? user.name
-        user.email = email ?? user.email
+  async update(request, response) {
+    const { name, email, password, old_password } = request.body;
+    const user_id = request.user.id;
 
-        if(password && !old_password) {
-            throw new AppError("Inform the old password")
-        }
-        
-        if(password && old_password) {
-            const checkOldPassword = await compare(old_password, user.password)
+    const user = await knex("users").where({ id: user_id }).first();
 
-            if(!checkOldPassword) {
-                throw new AppError("Old password is not right")
-            }
-
-            user.password = await hash(password,8)
-        }
-
-        await database.run(`
-        UPDATE users SET
-         name = ?,
-         email = ?,
-         password =?,
-         updated_at = DATETIME('now')
-         WHERE id = ?`,
-         [user.name, user.email, user.password, user_id])
-
-         return response.json()
+    if (!user) {
+      throw new AppError("User not found");
     }
+
+    const userUpdatedEmail = await knex("users").where({ email }).first();
+    if (userUpdatedEmail && userUpdatedEmail.id !== user.id) {
+      throw new AppError("Email already used");
+    }
+
+    user.name = name ?? user.name;
+    user.email = email ?? user.email;
+
+    if (password && !old_password) {
+      throw new AppError("Inform the old password");
+    }
+
+    if (password && old_password) {
+      const checkOldPassword = await compare(old_password, user.password);
+
+      if (!checkOldPassword) {
+        throw new AppError("Old password is not right");
+      }
+
+      user.password = await hash(password, 8);
+    } else if (password && !old_password) {
+    } else {
+      user.password = user.password;
+    }
+
+    await knex("users")
+      .update({
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        updated_at: knex.fn.now(),
+      })
+      .where({ id: user_id });
+
+    return response.json();
+  }
 }
-
-module.exports = UsersController

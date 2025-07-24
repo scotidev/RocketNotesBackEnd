@@ -1,10 +1,9 @@
-const { Router } = require("express")
-const TagsController = require("../controllers/TagsController.js")
-const tagsRoutes = Router()
-const ensureAuthenticated = require("../middleware/ensureAuthenticated.js")
+import { Router } from "express";
+import { TagsController } from "../controllers/TagsController.js";
+import { ensureAuthenticated } from "../middleware/ensureAuthenticated.js";
 
-const tagsController = new TagsController()
+export const tagsRoutes = Router();
 
-tagsRoutes.get('/',ensureAuthenticated, tagsController.index)
+const tagsController = new TagsController();
 
-module.exports = tagsRoutes
+tagsRoutes.get("/", ensureAuthenticated, tagsController.index);

@@ -1,32 +1,33 @@
-const knex = require("../database/knex")
-const AppError = require("../utils/AppError.js")
-const { compare } = require("bcryptjs")
-const authConfig = require("../configs/auth.js")
-const { sign } = require("jsonwebtoken")
+import { knexConnection as knex } from "../database/knex/index.js";
+import { AppError } from "../utils/AppError.js";
+import { compare } from "bcrypt";
+import authConfig from "../configs/auth.js";
 
-class SessionsController {
-    async create(request, response) {
-        const { email, password } = request.body
-        const user = await knex("users").where({email}).first()
+import pkg from "jsonwebtoken";
 
-        if(!user) {
-            throw new AppError("Email ou senha incorreta", 401)
-        }
+const { sign } = pkg;
 
-        const passwordMatched = await compare(password, user.password)
+export class SessionsController {
+  async create(request, response) {
+    const { email, password } = request.body;
+    const user = await knex("users").where({ email }).first();
 
-        if(!passwordMatched) {
-            throw new AppError("Email ou senha incorreta", 401)
-        }
-
-        const { secret, expiresIn } = authConfig.jwt 
-        const token = sign({}, secret, {
-            subject: String(user.id),
-            expiresIn
-        })
-
-        return response.json({user, token})
+    if (!user) {
+      throw new AppError("Email ou senha incorreta", 401);
     }
-}
 
-module.exports = SessionsController
+    const passwordMatched = await compare(password, user.password);
+
+    if (!passwordMatched) {
+      throw new AppError("Email ou senha incorreta", 401);
+    }
+
+    const { secret, expiresIn } = authConfig.jwt;
+    const token = sign({}, secret, {
+      subject: String(user.id),
+      expiresIn,
+    });
+
+    return response.json({ user, token });
+  }
+}

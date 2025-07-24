@@ -1,26 +1,27 @@
-const { verify } = require("jsonwebtoken")
-const AppError = require("../utils/AppError.js")
-const authConfig = require("../configs/auth.js")
+import { AppError } from "../utils/AppError.js";
+import authConfig from "../configs/auth.js";
+import pkg from "jsonwebtoken";
 
-function ensureAuthenticated(request, response, next) {
-    const authHeader =  request.headers.authorization
-    if(!authHeader) {
-        throw new AppError("JWT token inválido", 401)
-    }
+const { verify } = pkg;
 
-    const [ , token] = authHeader.split(" ")
+export function ensureAuthenticated(request, response, next) {
+  const authHeader = request.headers.authorization;
 
-    try {
-        const { sub: user_id } = verify(token, authConfig.jwt.secret)
+  if (!authHeader) {
+    throw new AppError("JWT token inválido", 401);
+  }
 
-        request.user = {
-            id: Number(user_id),
-        }
-        return next()
+  const [, token] = authHeader.split(" ");
 
-    } catch {
-        throw new AppError("JWT token inválido", 401)
-    }
+  try {
+    const { sub: user_id } = verify(token, authConfig.jwt.secret);
+
+    request.user = {
+      id: Number(user_id),
+    };
+
+    return next();
+  } catch (error) {
+    throw new AppError("JWT token inválido", 401);
+  }
 }
-
-module.exports = ensureAuthenticated

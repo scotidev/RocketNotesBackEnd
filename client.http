@@ -1,0 +1,83 @@
+# Variables
+@baseUrl = http://localhost:3333
+@authToken = {{authenticate.response.body.token}}
+
+###
+
+# CreateUser
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+    "name": "gabriel",
+    "email": "gabriiel@example.com",
+    "password": "123"
+}
+
+### 
+
+# @name authenticate
+POST {{baseUrl}}/sessions
+Content-Type: application/json
+
+{
+    "email": "gabriiel@example.com",
+    "password": "novaSenha456"
+}
+
+### 
+
+# UpdateUser
+PUT {{baseUrl}}/users
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "name": "Pedro Teste Atualizado",
+    "email": "gabriiel@example.com",
+    "old_password": "123",
+    "password": "novaSenha456"
+}
+
+### 
+
+# CreateNote
+POST {{baseUrl}}/notes
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "title": "Minha Nota sobre Node.js",
+    "description": "Estudando Fastify e Knex para o backend.",
+    "tags": ["Node.js", "Backend", "Fastify"],
+    "links": ["https://nodejs.org/", "https://www.google.com"]
+}
+
+###
+
+# ShowNotes
+# Você pode adicionar filtros na URL como: ?title=Node.js&tags=Backend
+GET {{baseUrl}}/notes?title=Node.js&tags=Backend
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+# GetNote
+GET {{baseUrl}}/notes/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+# DeleteNote
+DELETE {{baseUrl}}/notes/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+# GetTags
+GET {{baseUrl}}/tags
+Content-Type: application/json
+Authorization: Bearer {{authToken}}

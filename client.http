@@ -9,8 +9,8 @@ POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-    "name": "gabriel",
-    "email": "gabriel@example.com",
+    "name": "user",
+    "email": "user@example.com",
     "password": "123"
 }
 
@@ -21,7 +21,7 @@ POST {{baseUrl}}/sessions
 Content-Type: application/json
 
 {
-    "email": "gabriiel@example.com",
+    "email": "user@example.com",
     "password": "novaSenha456"
 }
 
@@ -33,8 +33,8 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-    "name": "Pedro Teste Atualizado",
-    "email": "gabriiel@example.com",
+    "name": "User2",
+    "email": "user2@example.com",
     "old_password": "123",
     "password": "novaSenha456"
 }

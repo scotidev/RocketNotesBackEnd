@@ -1,9 +1,14 @@
 import { knexConnection as knex } from "../database/knex/index.js";
+import { AppError } from "../utils/AppError.js";
 
 export class NotesController {
   async create(request, response) {
     const { title, description, tags, links } = request.body;
     const user_id = request.user.id;
+
+    if (!title || !description || !tags || !links) {
+      throw new AppError("Preencha todos os campos.");
+    }
 
     const [note_id] = await knex("notes").insert({
       title,

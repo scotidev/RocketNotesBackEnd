@@ -8,11 +8,11 @@ Acesse a aplicação em: [https://rocketnotesfrontend42.netlify.app/](https://ro
 
 ## Tecnologias Utilizadas
 
-- ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) **Node.js**
-- ![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white) **Express**
-- ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white) **SQLite**
-- ![Knex.js](https://img.shields.io/badge/Knex.js-EA5934?style=for-the-badge&logo=knex&logoColor=white) **Knex.js**
-- ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) **JavaScript**
+- ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+- ![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white) 
+- ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+- ![Knex.js](https://img.shields.io/badge/Knex.js-EA5934?style=for-the-badge&logo=knex&logoColor=white)
+- ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) 
 
 ## Sobre o Projeto
 
